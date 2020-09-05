@@ -8,41 +8,43 @@ const { mutation } = require('./mutation')
 const { subscription } = require('./subscription')
 
 const Server = (context = {}) => {
-    const app = express()
+  const app = express()
 
-    app.get('/alive', (_req, res) => {
-        res.json({ ok: 'yes' })
-    })
-    app.get('/ready', (_req, res) => {
-        res.json({ ok: 'yes' })
-    })
+  app.get('/alive', (_req, res) => {
+    res.json({ ok: 'yes' })
+  })
+  app.get('/ready', (_req, res) => {
+    res.json({ ok: 'yes' })
+  })
 
-    const server = new ApolloServer({
-        schema: new GraphQLSchema({
-            query: query,
-            mutation: mutation,
-            subscription: subscription,
-        }),
-        context: ({ req, res }) => {
-            return { 
-                req, 
-                res,
-                ...context
-            }
-        }
-    })
+  const server = new ApolloServer({
+    schema: new GraphQLSchema({
+      query: query,
+      mutation: mutation,
+      subscription: subscription,
+    }),
+    context: ({ req, res }) => {
+      return {
+        req,
+        res,
+        ...context,
+      }
+    },
+  })
 
-    server.applyMiddleware({ app })
+  server.applyMiddleware({ app })
 
-    const httpServer = createServer(app)
+  const httpServer = createServer(app)
 
-    server.installSubscriptionHandlers(httpServer)
+  server.installSubscriptionHandlers(httpServer)
 
-    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-    console.log(`🚀 Subscriptions ready at ws://localhost:4000${server.subscriptionsPath}`)
-    return httpServer
+  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+  console.log(
+    `🚀 Subscriptions ready at ws://localhost:4000${server.subscriptionsPath}`,
+  )
+  return httpServer
 }
 
 module.exports = {
-    Server,
+  Server,
 }
