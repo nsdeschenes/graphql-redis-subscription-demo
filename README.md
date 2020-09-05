@@ -35,6 +35,7 @@ In [index.js](https://github.com/nslandolt/graphql-redis-subscription-demo/blob/
 ---
 
 ```javascript
+// mutation.js
 // ...
 
 resolve: async (_, args, { redis: { redis, setAsync } }) => {
@@ -58,6 +59,7 @@ In [mutation.js](https://github.com/nslandolt/graphql-redis-subscription-demo/bl
 ---
 
 ```javascript
+// subscriptions.js
 // ...
 
 const REDIS_PUSHED = 'notification'
