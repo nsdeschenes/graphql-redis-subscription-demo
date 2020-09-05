@@ -18,13 +18,20 @@ module.exports.mutation = new GraphQLObjectType({
           await setAsync(args.key, args.value)
         } catch (err) {
           console.error(`Redis Error: ${err}`)
+          throw new Error('Unable to send message to redis.')
         }
 
         const publisher = redis.createClient()
-        publisher.publish(
-          'notification',
-          JSON.stringify({ key: args.key, value: args.value }),
-        )
+        try {
+          publisher.publish(
+            'notification',
+            JSON.stringify({ key: args.key, value: args.value }),
+          )
+        } catch (err) {
+          console.error(`Redis publish error: ${err}`)
+          throw new Error('Unable to publish message to redis.')
+        }
+
         publisher.quit()
 
         return 'Sent To Redis'

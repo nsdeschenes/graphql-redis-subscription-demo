@@ -18,7 +18,14 @@ module.exports.query = new GraphQLObjectType({
         },
       },
       resolve: async (_, args, { redis: { getAsync } }) => {
-        const data = await getAsync(args.key)
+        let data
+
+        try {
+          data = await getAsync(args.key)
+        } catch (err) {
+          console.error(`Error when retrieving message from redis: ${err}`)
+          throw new Error('Unable to retrieve message from redis.')
+        }
 
         return data
       },
