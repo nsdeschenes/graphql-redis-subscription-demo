@@ -2,7 +2,7 @@
 
 This is a simple GraphQL API demo example testing to see the possibility of having a Redis pubsub trigger a GraphQL subscription.
 
-To demo this possibility I am using the `graphql-redis-subscriptions` pubsub engine. 
+To demo this possibility I am using the `graphql-redis-subscriptions` pubsub engine. The reason behind using this package rather than creating our own implementation with the `apollo-server` base `PubSub` object is detailed here in the `apollo-server` [documents](https://www.apollographql.com/docs/apollo-server/data/subscriptions/#pubsub-implementations).
 
 [Running the demo](#Running-this-demo)
 
