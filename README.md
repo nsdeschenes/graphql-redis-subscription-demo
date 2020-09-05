@@ -2,7 +2,9 @@
 
 This is a simple GraphQL API demo example testing to see the possibility of having a Redis pubsub trigger a GraphQL subscription.
 
-To demo this possibility I am using the `graphql-redis-subscriptions` pubsub engine. The reason behind using this package rather than creating our own implementation with the `apollo-server` base `PubSub` object is detailed here in the `apollo-server` [documents](https://www.apollographql.com/docs/apollo-server/data/subscriptions/#pubsub-implementations).
+To demo this possibility I am using the [`graphql-redis-subscriptions`](https://github.com/davidyaha/graphql-redis-subscriptions) pubsub engine. The reason behind using this package rather than creating our own implementation with the `apollo-server` base `PubSub` object is detailed here in the `apollo-server` [documents](https://www.apollographql.com/docs/apollo-server/data/subscriptions/#pubsub-implementations).
+
+For the actual implementation in tracker, I am planning on using a `UUID` that is added onto the channel as show [here](https://github.com/davidyaha/graphql-redis-subscriptions#dynamically-create-a-topic-based-on-subscription-args-passed-on-the-query), this will give the API the ability to ensure that the user that requested the scan, gets the correct results back. The actual `UUID` will be created during the `requestScan` mutation and sent to the frontend, and will be used as an argument in the subscription.
 
 [Running the demo](#Running-this-demo)
 
