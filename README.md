@@ -130,6 +130,7 @@ subscription {
   }
 }
 ```
+![](https://user-images.githubusercontent.com/7891920/92303547-41e06780-ef4c-11ea-93ea-32f69815a3c9.png)
 
 #### Execute Mutation
 When the mutation is executed you will see the key and value that you submitted as arguments appear in the subscriptions results.
@@ -138,6 +139,8 @@ mutation {
   pushToRedis(key: "Key1", value: "First Test Data")
 }
 ```
+![](https://user-images.githubusercontent.com/7891920/92303561-5b81af00-ef4c-11ea-98c1-53cb8142cc57.png)
+
 
 #### Execute Query
 When you execute the query, you will retrieve the value from the cache corresponding with the key that you executed the mutation with.
@@ -146,3 +149,4 @@ query {
   getFromRedis (key: "Key1")
 }
 ```
+![](https://user-images.githubusercontent.com/7891920/92303569-6f2d1580-ef4c-11ea-9e75-6f2a366669b6.png)
