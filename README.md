@@ -138,6 +138,7 @@ mutation {
 ```
 
 #### Execute Query
+When you execute the query, you will retrieve the value from the cache corresponding with the key that you executed the mutation with.
 ```graphql
 query {
   getFromRedis (key: "Key1")
