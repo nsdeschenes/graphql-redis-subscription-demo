@@ -4,6 +4,9 @@ This is a simple GraphQL API demo example testing to see the possibility of havi
 
 To demo this possibility I am using the `graphql-redis-subscriptions` pubsub engine. 
 
+[Running the demo](#Running-this-demo)
+
+### Creating the PubSub, and Client
 ```javascript
 // index.js
 const redis = require('redis')
@@ -34,6 +37,7 @@ In [index.js](https://github.com/nslandolt/graphql-redis-subscription-demo/blob/
 
 ---
 
+### Mutation Details
 ```javascript
 // mutation.js
 // ...
@@ -58,6 +62,7 @@ In [mutation.js](https://github.com/nslandolt/graphql-redis-subscription-demo/bl
 
 ---
 
+### Subscription Details
 ```javascript
 // subscriptions.js
 // ...
@@ -93,3 +98,48 @@ itemPushedToRedis: {
 // ...
 ```
 In [subscription.js](https://github.com/nslandolt/graphql-redis-subscription-demo/blob/master/src/subscription.js) I define the `itemPushedToRedis` graphql object inside the `subscription` graphql object. The key part of this object is the `subscribe` field at the end of the object. This field returns an `AsyncIterator` which will listen to the `notification` channel in the redis cache. When the `AsyncIterator` is triggered the data that it received is then passed onto the resolver which then in turn resolves the fields in the `RedisPushInfo` object.
+
+---
+
+## Running this demo
+### Start Redis Docker Image
+```cmd
+docker run -d --network=host --name test-redis redis
+```
+
+### Install dependencies
+```cmd
+npm install --save
+```
+
+### Running the server
+```cmd
+npm run start
+```
+
+### Demo functions
+Ensure that you open different tabs in graphql-playground for each of the following.
+#### Start Subscription
+```graphql
+subscription {
+  itemPushedToRedis {
+    key
+    value
+  }
+}
+```
+
+#### Execute Mutation
+When the mutation is executed you will see the key and value that you submitted as arguments appear in the subscriptions results.
+```graphql
+mutation {
+  pushToRedis(key: "Key1", value: "First Test Data")
+}
+```
+
+#### Execute Query
+```graphql
+query {
+  getFromRedis (key: "Key1")
+}
+```
