@@ -1,8 +1,9 @@
 const express = require('express')
 const { GraphQLSchema } = require('graphql')
-const { createServer } = require('http')
-const { ApolloServer } = require('apollo-server-express')
-
+import { createServer } from 'http'
+import { SubscriptionServer } from 'subscriptions-transport-ws'
+const { graphqlHTTP } = require('express-graphql')
+ 
 const { query } = require('./query')
 const { mutation } = require('./mutation')
 const { subscription } = require('./subscription')
@@ -17,32 +18,23 @@ const Server = (context = {}) => {
     res.json({ ok: 'yes' })
   })
 
-  const server = new ApolloServer({
+  app.use('/graphql', graphqlHTTP(async (request, response, graphqlParams) => ({
     schema: new GraphQLSchema({
       query: query,
       mutation: mutation,
       subscription: subscription,
     }),
-    context: ({ req, res }) => {
-      return {
-        req,
-        res,
-        ...context,
-      }
+    context: {
+      request,
+      response,
+      graphqlParams,
+      ...context,
     },
-  })
+  })))
 
-  server.applyMiddleware({ app })
+  const server = https.createServer(app)
 
-  const httpServer = createServer(app)
-
-  server.installSubscriptionHandlers(httpServer)
-
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-  console.log(
-    `🚀 Subscriptions ready at ws://localhost:4000${server.subscriptionsPath}`,
-  )
-  return httpServer
+  return server
 }
 
 module.exports = {

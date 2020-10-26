@@ -5,6 +5,18 @@ const PORT = 4000
 
 const { Server } = require('./src/server')
 
+const { SubscriptionServer } = require('subscriptions-transport-ws')
+const { GraphQLSchema, execute, subscribe } = require('graphql')
+const { query } = require('./src/query')
+const { mutation } = require('./src/mutation')
+const { subscription } = require('./src/subscription')
+
+const schema = new GraphQLSchema({
+  query: query,
+  mutation: mutation,
+  subscription: subscription,
+})
+
 ;(async () => {
   const pubsub = new RedisPubSub({
     publisher: redis.createClient(),
@@ -22,8 +34,18 @@ const { Server } = require('./src/server')
 
   Server({ pubsub, redis: { redis, client, getAsync, setAsync } }).listen(
     PORT,
-    (err) => {
-      if (err) throw err
+    () => {
+      createServer(
+        {
+          schema,
+          execute,
+          subscribe,
+        },
+        {
+          server: this,
+          path: '/graphql',
+        },
+      )
     },
   )
 })()
