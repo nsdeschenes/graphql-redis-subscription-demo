@@ -50,7 +50,6 @@ const schema = new GraphQLSchema({
     expressPlayground({
       endpoint: '/graphql',
       subscriptionEndpoint: '/graphql',
-      
     }),
   )
 
