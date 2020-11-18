@@ -1,17 +1,19 @@
+const express = require('express')
 const http = require('http')
 const redis = require('redis')
 const { promisify } = require('util')
+const { graphqlHTTP } = require('express-graphql')
 const { RedisPubSub } = require('graphql-redis-subscriptions')
 const { GraphQLSchema, execute, subscribe } = require('graphql')
 const { createServer } = require('graphql-ws')
+const expressPlayground = require('graphql-playground-middleware-express')
+  .default
 
 const { query } = require('./src/query')
 const { mutation } = require('./src/mutation')
 const { subscription } = require('./src/subscription')
 
-const express = require('express')
-
-const { graphqlHTTP } = require('express-graphql')
+const PORT = 3000
 
 const schema = new GraphQLSchema({
   query: query,
@@ -43,6 +45,15 @@ const schema = new GraphQLSchema({
     res.json({ ok: 'yes' })
   })
 
+  app.get(
+    '/graphql',
+    expressPlayground({
+      endpoint: '/graphql',
+      subscriptionEndpoint: '/graphql',
+      
+    }),
+  )
+
   app.use(
     '/graphql',
     graphqlHTTP(async (request, response, graphqlParams) => ({
@@ -60,19 +71,32 @@ const schema = new GraphQLSchema({
 
   const server = http.createServer(app)
 
-  server.listen(3000, () => {
+  server.listen(PORT, () => 
     createServer(
       {
+        context: async (ctx, msg, args) => {
+          console.log(ctx)
+          console.log(msg)
+          console.log(args)
+          return { ctx, msg, args }
+        },
         schema,
         execute,
         subscribe,
+        onConnect: (ctx) => {
+          console.log('Connect', ctx)
+        },
+        onError: (err) => {
+          console.log(err)
+        },
       },
       {
         server,
         path: '/graphql',
       },
-    )
-  })
+    ),
+  )
 
-  console.info('Listening on http://localhost:3000/graphql')
+  console.log(`🚀 Server ready at http://localhost:${PORT}/graphql`)
+  console.log(`🚀 Subscriptions ready at ws://localhost:${PORT}/graphql`)
 })()
